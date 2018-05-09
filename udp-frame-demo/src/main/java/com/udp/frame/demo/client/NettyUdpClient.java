@@ -1,7 +1,6 @@
-package com.udp.frame.demo.client.provider;
+package com.udp.frame.demo.client;
 
-import com.udp.frame.demo.client.handler.ClientHandler;
-import com.udp.frame.demo.client.handler.ConnectorIdleStateTrigger;
+import com.udp.frame.demo.client.handler.ClientReadHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -9,9 +8,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
-import io.netty.handler.timeout.IdleStateHandler;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * 项目名称:testProject
@@ -32,9 +28,7 @@ public class NettyUdpClient {
                     .handler(new ChannelInitializer<NioDatagramChannel>() {
                         @Override
                         protected void initChannel(NioDatagramChannel nioDatagramChannel) throws Exception {
-                            nioDatagramChannel.pipeline().addLast(new IdleStateHandler(0, 5, 0, TimeUnit.SECONDS));
-                            nioDatagramChannel.pipeline().addLast(new ConnectorIdleStateTrigger());
-                            nioDatagramChannel.pipeline().addLast(new ClientHandler());
+                            nioDatagramChannel.pipeline().addLast(new ClientReadHandler());
                         }
                     });
             ChannelFuture future = b.bind(0).sync();

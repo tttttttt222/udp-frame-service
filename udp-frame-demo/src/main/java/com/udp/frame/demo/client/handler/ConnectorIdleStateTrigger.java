@@ -27,7 +27,7 @@ public class ConnectorIdleStateTrigger extends ChannelInboundHandlerAdapter {
         if (evt instanceof IdleStateEvent) {
             IdleState state = ((IdleStateEvent) evt).state();
             if (state == IdleState.WRITER_IDLE) {
-                System.out.println("写触发");
+//                System.out.println("写触发");
                 ByteBuf buf = Unpooled.copiedBuffer("Heartbeat", CharsetUtil.UTF_8);
                 DatagramPacket packet = new DatagramPacket(buf, new InetSocketAddress("127.0.0.1", 9999));
                 ctx.writeAndFlush(packet);

@@ -16,15 +16,9 @@ import java.net.InetSocketAddress;
  * 创建人:ryw
  * 创建时间:2018/5/8
  */
-public class ClientHandler extends SimpleChannelInboundHandler<DatagramPacket> {
+public class ClientReadHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
 
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ByteBuf buf = Unpooled.copiedBuffer("发送111111111", CharsetUtil.UTF_8);
-        DatagramPacket packet = new DatagramPacket(buf,new InetSocketAddress("127.0.0.1",9999));
-        ctx.writeAndFlush(packet);
-    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket) throws Exception {
