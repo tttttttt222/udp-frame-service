@@ -5,9 +5,10 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
-import io.netty.util.CharsetUtil;
+import io.netty.util.*;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 项目名称:udp-frame-demo
@@ -17,12 +18,18 @@ import java.net.InetSocketAddress;
  */
 public class ClientWriteHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
+    private final Timer timer;
+
+    private long timeout;
+
+    public ClientWriteHandler(Timer timer, long timeout) {
+        this.timer = timer;
+        this.timeout = timeout;
+    }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ByteBuf buf = Unpooled.copiedBuffer("发送111111111", CharsetUtil.UTF_8);
-        DatagramPacket packet = new DatagramPacket(buf, new InetSocketAddress("127.0.0.1", 9999));
-        ctx.writeAndFlush(packet);
+        timer.newTimeout(new FrameSendTask(ctx), timeout, TimeUnit.MICROSECONDS);
     }
 
 

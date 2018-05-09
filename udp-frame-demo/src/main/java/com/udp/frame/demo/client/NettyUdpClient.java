@@ -1,6 +1,7 @@
 package com.udp.frame.demo.client;
 
 import com.udp.frame.demo.client.handler.ClientReadHandler;
+import com.udp.frame.demo.client.handler.ClientWriteHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -8,6 +9,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.util.HashedWheelTimer;
 
 /**
  * 项目名称:testProject
@@ -16,6 +18,8 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
  * 创建时间:2018/5/7
  */
 public class NettyUdpClient {
+
+    protected HashedWheelTimer timer = new HashedWheelTimer();
 
     public void run() throws Exception {
         EventLoopGroup workerGroup  = new NioEventLoopGroup();
@@ -29,6 +33,7 @@ public class NettyUdpClient {
                         @Override
                         protected void initChannel(NioDatagramChannel nioDatagramChannel) throws Exception {
                             nioDatagramChannel.pipeline().addLast(new ClientReadHandler());
+                            nioDatagramChannel.pipeline().addLast(new ClientWriteHandler(timer,10));
                         }
                     });
             ChannelFuture future = b.bind(0).sync();

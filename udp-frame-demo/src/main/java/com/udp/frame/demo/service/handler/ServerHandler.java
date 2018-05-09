@@ -24,7 +24,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        System.out.println("异常断开"+cause);
-        ctx.close();
+//        System.out.println("异常断开"+cause);
+//        ctx.close();
     }
 }
