@@ -19,11 +19,11 @@ public class Clinet2 {
 
     public static void main(String[] args) throws Exception {
         ArrayList<String> receivers = new ArrayList<String>();
-        receivers.add("a");
+        receivers.add("b");
         SimpleFrameInfoRequest simpleFrameInfoRequest = new SimpleFrameInfoRequest();
         FrameIncrease frameIncrease = new FrameIncrease();
         simpleFrameInfoRequest.setMsg("第" + frameIncrease.getFrameNo() + "数据");
-        new NettyUdpClient<SimpleFrameInfoRequest>("b", receivers, new InetSocketAddress("127.0.0.1", 9999), simpleFrameInfoRequest, frameIncrease, new ReceiveInfoInterface() {
+        new NettyUdpClient<SimpleFrameInfoRequest>("a", receivers, new InetSocketAddress("127.0.0.1", 9999), simpleFrameInfoRequest, frameIncrease, new ReceiveInfoInterface() {
             public void readInfo(Object msg) {
                 System.out.println(msg);
             }
