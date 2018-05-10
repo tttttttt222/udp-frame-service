@@ -1,5 +1,8 @@
 package com.udp.frame.demo.service;
 
+import com.udp.frame.demo.common.InfoDecodeHandler;
+import com.udp.frame.demo.common.InfoEncodeHandler;
+import com.udp.frame.demo.service.handler.PerosnInHandler;
 import com.udp.frame.demo.service.handler.ServerHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -18,6 +21,7 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 public class NettyUdpServer {
 
 
+
     public void run(int port) throws Exception {
         EventLoopGroup workerGroup  = new NioEventLoopGroup();
         try {
@@ -30,6 +34,9 @@ public class NettyUdpServer {
                 .handler(new ChannelInitializer<NioDatagramChannel>() {
                     @Override
                     protected void initChannel(NioDatagramChannel nioDatagramChannel) throws Exception {
+                        nioDatagramChannel.pipeline().addLast(new InfoEncodeHandler());
+                        nioDatagramChannel.pipeline().addLast(new InfoDecodeHandler());
+                        nioDatagramChannel.pipeline().addLast(new PerosnInHandler());
                         nioDatagramChannel.pipeline().addLast(new ServerHandler());
                     }
                 });

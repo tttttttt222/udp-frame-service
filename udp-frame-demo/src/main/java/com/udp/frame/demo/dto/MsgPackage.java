@@ -1,38 +1,35 @@
 package com.udp.frame.demo.dto;
 
+import java.net.InetSocketAddress;
+import java.util.List;
+
 /**
  * 项目名称:udp-frame-demo
  * 描述:
  * 创建人:ryw
  * 创建时间:2018/5/9
  */
-public class MsgPackage {
+public class MsgPackage<T> {
 
 
-    /*数据包长度*/
-    int length;
-
-    /*0 普通上传 1 重连*/
+    /*0 普通上传 1连接包 2 重连*/
     int type;
 
-
     /*请求序列*/
-    int seq;
+    long seq;
 
     /*帧序号*/
-    int frame;
+    long frame;
 
-    /*数据json*/
-    String msg;
+    private InetSocketAddress address;
 
+    private String sender;
 
-    public int getLength() {
-        return length;
-    }
+    private List<String> receivers;
 
-    public void setLength(int length) {
-        this.length = length;
-    }
+    /*数据*/
+    T info;
+
 
     public int getType() {
         return type;
@@ -42,27 +39,51 @@ public class MsgPackage {
         this.type = type;
     }
 
-    public int getSeq() {
+    public long getSeq() {
         return seq;
     }
 
-    public void setSeq(int seq) {
+    public void setSeq(long seq) {
         this.seq = seq;
     }
 
-    public int getFrame() {
+    public long getFrame() {
         return frame;
     }
 
-    public void setFrame(int frame) {
+    public void setFrame(long frame) {
         this.frame = frame;
     }
 
-    public String getMsg() {
-        return msg;
+    public T getInfo() {
+        return info;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
+    public void setInfo(T info) {
+        this.info = info;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public List<String> getReceivers() {
+        return receivers;
+    }
+
+    public void setReceivers(List<String> receivers) {
+        this.receivers = receivers;
+    }
+
+    public InetSocketAddress getAddress() {
+        return address;
+    }
+
+    public void setAddress(InetSocketAddress address) {
+        this.address = address;
     }
 }

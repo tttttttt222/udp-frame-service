@@ -1,10 +1,13 @@
 package com.udp.frame.demo.service.handler;
 
-import io.netty.buffer.Unpooled;
+import com.udp.frame.demo.common.ChannelMap;
+import com.udp.frame.demo.dto.MsgPackage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.socket.DatagramPacket;
-import io.netty.util.CharsetUtil;
+
+import java.net.InetSocketAddress;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -13,17 +16,26 @@ import io.netty.util.CharsetUtil;
  * 创建人:ryw
  * 创建时间:2018/5/7
  */
-public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
+public class ServerHandler extends SimpleChannelInboundHandler<MsgPackage> {
+
 
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ch, DatagramPacket datagramPacket) throws Exception {
-        System.out.println(datagramPacket.content().toString(CharsetUtil.UTF_8));
-        ch.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer("返回2222222",CharsetUtil.UTF_8), datagramPacket.sender()));
+    protected void channelRead0(ChannelHandlerContext ch, MsgPackage msgPackage){
+        List<String> receivers = msgPackage.getReceivers();
+        for (String receiver : receivers) {
+            Map<String, InetSocketAddress> chmap = ChannelMap.getInstance().getChmap();
+            InetSocketAddress inetSocketAddress = chmap.get(receiver);
+            if (inetSocketAddress != null){
+                //目标地址
+                msgPackage.setAddress(inetSocketAddress);
+                ch.writeAndFlush(msgPackage);
+            }
+        }
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause){
 //        System.out.println("异常断开"+cause);
 //        ctx.close();
     }

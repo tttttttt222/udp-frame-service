@@ -2,6 +2,10 @@ package com.udp.frame.demo.client;
 
 import com.udp.frame.demo.client.handler.ClientReadHandler;
 import com.udp.frame.demo.client.handler.ClientWriteHandler;
+import com.udp.frame.demo.common.InfoDecodeHandler;
+import com.udp.frame.demo.common.InfoEncodeHandler;
+import com.udp.frame.demo.dto.request.SimpleFrameInfoRequest;
+import com.udp.frame.demo.utils.FrameIncreaseUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -11,18 +15,37 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.HashedWheelTimer;
 
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 项目名称:testProject
  * 描述:
  * 创建人:ryw
  * 创建时间:2018/5/7
  */
-public class NettyUdpClient {
+public class NettyUdpClient<T> {
 
-    protected HashedWheelTimer timer = new HashedWheelTimer();
+    private HashedWheelTimer timer = new HashedWheelTimer();
+
+    private String sender;
+
+    private List<String> receivers;
+
+    private InetSocketAddress serverAddress;
+
+    private T data;
+
+    public NettyUdpClient(String sender, List<String> receivers, InetSocketAddress serverAddress, T data) {
+        this.sender = sender;
+        this.receivers = receivers;
+        this.serverAddress = serverAddress;
+        this.data = data;
+    }
 
     public void run() throws Exception {
-        EventLoopGroup workerGroup  = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
             //由于我们用的是UDP协议，所以要用NioDatagramChannel来创建
@@ -32,19 +55,24 @@ public class NettyUdpClient {
                     .handler(new ChannelInitializer<NioDatagramChannel>() {
                         @Override
                         protected void initChannel(NioDatagramChannel nioDatagramChannel) throws Exception {
+                            nioDatagramChannel.pipeline().addLast(new InfoEncodeHandler());
+                            nioDatagramChannel.pipeline().addLast(new InfoDecodeHandler());
                             nioDatagramChannel.pipeline().addLast(new ClientReadHandler());
-                            nioDatagramChannel.pipeline().addLast(new ClientWriteHandler(timer,10));
+                            nioDatagramChannel.pipeline().addLast(new ClientWriteHandler(timer, 10, sender, receivers, serverAddress, data));
                         }
                     });
             ChannelFuture future = b.bind(0).sync();
             future.channel().closeFuture().sync();
-        }finally {
-            workerGroup .shutdownGracefully();
+        } finally {
+            workerGroup.shutdownGracefully();
         }
     }
 
 
     public static void main(String[] args) throws Exception {
-        new NettyUdpClient().run();
+        ArrayList<String> receivers = new ArrayList<String>();
+        SimpleFrameInfoRequest simpleFrameInfoRequest = new SimpleFrameInfoRequest();
+        simpleFrameInfoRequest.setMsg("第" + FrameIncreaseUtil.getInstance().getFrameNo() + "数据");
+        new NettyUdpClient<SimpleFrameInfoRequest>("a", receivers, new InetSocketAddress("127.0.0.1",9999), simpleFrameInfoRequest).run();
     }
 }
