@@ -16,6 +16,7 @@ public class PerosnInHandler extends SimpleChannelInboundHandler<MsgPackage> {
 
 
     protected void channelRead0(ChannelHandlerContext ctx, MsgPackage msgPackage){
+        System.out.println("服务器接收到数据:"+msgPackage);
         if (msgPackage.getType() == 1){
             ChannelMap.getInstance().getChmap().put(msgPackage.getSender(),msgPackage.getAddress());
         }else {

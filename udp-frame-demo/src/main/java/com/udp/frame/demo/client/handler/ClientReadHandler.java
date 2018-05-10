@@ -1,5 +1,7 @@
 package com.udp.frame.demo.client.handler;
 
+import com.udp.frame.demo.client.ReceiveInfoInterface;
+import com.udp.frame.demo.dto.MsgPackage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,13 +18,18 @@ import java.net.InetSocketAddress;
  * 创建人:ryw
  * 创建时间:2018/5/8
  */
-public class ClientReadHandler extends SimpleChannelInboundHandler<DatagramPacket> {
+public class ClientReadHandler extends SimpleChannelInboundHandler<MsgPackage> {
 
+    ReceiveInfoInterface receiveInfoInterface;
 
+    public ClientReadHandler(ReceiveInfoInterface receiveInfoInterface) {
+        this.receiveInfoInterface = receiveInfoInterface;
+    }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket) throws Exception {
-        System.out.println(datagramPacket.content().toString(CharsetUtil.UTF_8));
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, MsgPackage msgPackage) throws Exception {
+        System.out.println(msgPackage);
+        receiveInfoInterface.readInfo(msgPackage.getInfo());
     }
 
     @Override
@@ -30,4 +37,6 @@ public class ClientReadHandler extends SimpleChannelInboundHandler<DatagramPacke
         System.out.println("异常断开"+cause);
         ctx.close();
     }
+
+
 }

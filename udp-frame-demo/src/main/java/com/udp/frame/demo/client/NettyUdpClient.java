@@ -5,7 +5,7 @@ import com.udp.frame.demo.client.handler.ClientWriteHandler;
 import com.udp.frame.demo.common.InfoDecodeHandler;
 import com.udp.frame.demo.common.InfoEncodeHandler;
 import com.udp.frame.demo.dto.request.SimpleFrameInfoRequest;
-import com.udp.frame.demo.utils.FrameIncreaseUtil;
+import com.udp.frame.demo.utils.FrameIncrease;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -37,11 +37,17 @@ public class NettyUdpClient<T> {
 
     private T data;
 
-    public NettyUdpClient(String sender, List<String> receivers, InetSocketAddress serverAddress, T data) {
+    private ReceiveInfoInterface receiveInfoInterface;
+
+    private FrameIncrease frameIncrease;
+
+    public NettyUdpClient(String sender, List<String> receivers, InetSocketAddress serverAddress, T data, FrameIncrease frameIncrease, ReceiveInfoInterface receiveInfoInterface) {
         this.sender = sender;
         this.receivers = receivers;
         this.serverAddress = serverAddress;
         this.data = data;
+        this.receiveInfoInterface = receiveInfoInterface;
+        this.frameIncrease = frameIncrease;
     }
 
     public void run() throws Exception {
@@ -57,8 +63,8 @@ public class NettyUdpClient<T> {
                         protected void initChannel(NioDatagramChannel nioDatagramChannel) throws Exception {
                             nioDatagramChannel.pipeline().addLast(new InfoEncodeHandler());
                             nioDatagramChannel.pipeline().addLast(new InfoDecodeHandler());
-                            nioDatagramChannel.pipeline().addLast(new ClientReadHandler());
-                            nioDatagramChannel.pipeline().addLast(new ClientWriteHandler(timer, 10, sender, receivers, serverAddress, data));
+                            nioDatagramChannel.pipeline().addLast(new ClientWriteHandler(timer, 10, sender, receivers, serverAddress, data, frameIncrease));
+                            nioDatagramChannel.pipeline().addLast(new ClientReadHandler(receiveInfoInterface));
                         }
                     });
             ChannelFuture future = b.bind(0).sync();
@@ -71,8 +77,13 @@ public class NettyUdpClient<T> {
 
     public static void main(String[] args) throws Exception {
         ArrayList<String> receivers = new ArrayList<String>();
+        receivers.add("b");
         SimpleFrameInfoRequest simpleFrameInfoRequest = new SimpleFrameInfoRequest();
-        simpleFrameInfoRequest.setMsg("第" + FrameIncreaseUtil.getInstance().getFrameNo() + "数据");
-        new NettyUdpClient<SimpleFrameInfoRequest>("a", receivers, new InetSocketAddress("127.0.0.1",9999), simpleFrameInfoRequest).run();
+        simpleFrameInfoRequest.setMsg("第数据");
+        new NettyUdpClient<SimpleFrameInfoRequest>("a", receivers, new InetSocketAddress("127.0.0.1", 9999), simpleFrameInfoRequest, new FrameIncrease(), new ReceiveInfoInterface() {
+            public void readInfo(Object msg) {
+                System.out.println(msg);
+            }
+        }).run();
     }
 }

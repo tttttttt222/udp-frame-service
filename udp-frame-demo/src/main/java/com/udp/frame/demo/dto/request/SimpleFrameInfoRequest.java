@@ -20,4 +20,11 @@ public class SimpleFrameInfoRequest {
     public void setMsg(String msg) {
         this.msg = msg;
     }
+
+    @Override
+    public String toString() {
+        return "SimpleFrameInfoRequest{" +
+                "msg='" + msg + '\'' +
+                '}';
+    }
 }

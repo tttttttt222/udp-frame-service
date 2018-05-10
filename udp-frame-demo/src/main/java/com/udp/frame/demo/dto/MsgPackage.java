@@ -86,4 +86,17 @@ public class MsgPackage<T> {
     public void setAddress(InetSocketAddress address) {
         this.address = address;
     }
+
+    @Override
+    public String toString() {
+        return "MsgPackage{" +
+                "type=" + type +
+                ", seq=" + seq +
+                ", frame=" + frame +
+                ", address=" + address +
+                ", sender='" + sender + '\'' +
+                ", receivers=" + receivers +
+                ", info=" + info +
+                '}';
+    }
 }
