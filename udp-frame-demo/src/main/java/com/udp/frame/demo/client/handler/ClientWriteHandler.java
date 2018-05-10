@@ -46,7 +46,7 @@ public class ClientWriteHandler<T> extends SimpleChannelInboundHandler<DatagramP
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         timer.schedule(new FrameSendTask<T>(ctx,data,sender,receivers,serverAddress ,frameIncrease)
-                , timeout,2);
+                , timeout,timeout);
     }
 
 
