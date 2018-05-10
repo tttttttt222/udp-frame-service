@@ -13,11 +13,12 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
-import io.netty.util.HashedWheelTimer;
+
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 /**
  * 项目名称:testProject
@@ -27,7 +28,7 @@ import java.util.List;
  */
 public class NettyUdpClient<T> {
 
-    private HashedWheelTimer timer = new HashedWheelTimer();
+    private Timer timer = new Timer(true);
 
     private String sender;
 
@@ -75,15 +76,15 @@ public class NettyUdpClient<T> {
     }
 
 
-    public static void main(String[] args) throws Exception {
-        ArrayList<String> receivers = new ArrayList<String>();
-        receivers.add("b");
-        SimpleFrameInfoRequest simpleFrameInfoRequest = new SimpleFrameInfoRequest();
-        simpleFrameInfoRequest.setMsg("第数据");
-        new NettyUdpClient<SimpleFrameInfoRequest>("a", receivers, new InetSocketAddress("127.0.0.1", 9999), simpleFrameInfoRequest, new FrameIncrease(), new ReceiveInfoInterface() {
-            public void readInfo(Object msg) {
-                System.out.println(msg);
-            }
-        }).run();
-    }
+//    public static void main(String[] args) throws Exception {
+//        ArrayList<String> receivers = new ArrayList<String>();
+//        receivers.add("b");
+//        SimpleFrameInfoRequest simpleFrameInfoRequest = new SimpleFrameInfoRequest();
+//        simpleFrameInfoRequest.setMsg("第数据");
+//        new NettyUdpClient<SimpleFrameInfoRequest>("a", receivers, new InetSocketAddress("127.0.0.1", 9999), simpleFrameInfoRequest, new FrameIncrease(), new ReceiveInfoInterface() {
+//            public void readInfo(Object msg) {
+//                System.out.println(msg);
+//            }
+//        }).run();
+//    }
 }

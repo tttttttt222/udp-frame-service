@@ -3,11 +3,11 @@ package com.udp.frame.demo.client.handler;
 import com.udp.frame.demo.dto.MsgPackage;
 import com.udp.frame.demo.utils.FrameIncrease;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.Timeout;
-import io.netty.util.TimerTask;
+
 
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.TimerTask;
 
 /**
  * 项目名称:udp-frame-demo
@@ -15,7 +15,7 @@ import java.util.List;
  * 创建人:ryw
  * 创建时间:2018/5/9
  */
-public class FrameSendTask<T> implements TimerTask {
+public class FrameSendTask<T> extends TimerTask {
 
 
     private ChannelHandlerContext ctx;
@@ -39,7 +39,7 @@ public class FrameSendTask<T> implements TimerTask {
         this.frameIncrease = frameIncrease;
     }
 
-    public void run(Timeout timeout) {
+    public void run() {
 
         MsgPackage<T> msgPackage = new MsgPackage<T>();
         msgPackage.setSender(sender);

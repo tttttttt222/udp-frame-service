@@ -4,10 +4,11 @@ import com.udp.frame.demo.utils.FrameIncrease;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
-import io.netty.util.*;
+
 
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -44,8 +45,8 @@ public class ClientWriteHandler<T> extends SimpleChannelInboundHandler<DatagramP
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        timer.newTimeout(new FrameSendTask<T>(ctx,data,sender,receivers,serverAddress ,frameIncrease)
-                , timeout, TimeUnit.MICROSECONDS);
+        timer.schedule(new FrameSendTask<T>(ctx,data,sender,receivers,serverAddress ,frameIncrease)
+                , timeout,2);
     }
 
 
