@@ -21,7 +21,7 @@ public class Client1 {
         receivers.add("a");
         SimpleFrameInfoRequest simpleFrameInfoRequest = new SimpleFrameInfoRequest();
         FrameIncrease frameIncrease = new FrameIncrease();
-        simpleFrameInfoRequest.setMsg("第" + frameIncrease.getFrameNo() + "数据");
+        simpleFrameInfoRequest.setMsg("b数据");
         new NettyUdpClient<SimpleFrameInfoRequest>("b", receivers, new InetSocketAddress("127.0.0.1", 9999), simpleFrameInfoRequest, frameIncrease, new ReceiveInfoInterface() {
             public void readInfo(Object msg) {
                 System.out.println(msg);

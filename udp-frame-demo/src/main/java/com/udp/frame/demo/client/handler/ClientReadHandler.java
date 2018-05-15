@@ -28,7 +28,7 @@ public class ClientReadHandler extends SimpleChannelInboundHandler<MsgPackage> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, MsgPackage msgPackage) throws Exception {
-        System.out.println(msgPackage);
+        System.out.println("接收到数据:"+msgPackage);
         receiveInfoInterface.readInfo(msgPackage.getInfo());
     }
 

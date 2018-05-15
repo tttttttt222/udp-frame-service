@@ -25,7 +25,7 @@ public class InfoEncodeHandler extends ChannelOutboundHandlerAdapter {
         MsgPackage msgPackage=(MsgPackage)obj;
         ByteBuf buf = Unpooled.buffer();
         String jsonString = JSON.toJSONString(msgPackage);
-        System.out.println(jsonString);
+        System.out.println("InfoEncodeHandler-发送数据:"+jsonString);
         byte[] bytes = jsonString.getBytes();
         buf.writeInt(bytes.length);
         buf.writeBytes(bytes);

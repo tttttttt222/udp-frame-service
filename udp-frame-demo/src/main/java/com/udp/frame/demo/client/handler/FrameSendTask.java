@@ -57,7 +57,7 @@ public class FrameSendTask<T> extends TimerTask {
         msgPackage.setSeq(System.currentTimeMillis());
         msgPackage.setInfo(infoRequest);
 
-        System.out.println();
+        System.out.println("FrameSendTask-发送数据:"+msgPackage);
         ctx.writeAndFlush(msgPackage);
     }
 }
