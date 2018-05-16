@@ -52,8 +52,8 @@ public class FrameSendTask<T> extends TimerTask {
             msgPackage.setType(0);
         }
 
-        long i = frameIncrease.addFrameNo();
-        msgPackage.setFrame(i);
+        msgPackage.setFrame(frameIncrease.getFrameNo());
+        frameIncrease.addFrameNo();
         msgPackage.setSeq(System.currentTimeMillis());
         msgPackage.setInfo(infoRequest);
 

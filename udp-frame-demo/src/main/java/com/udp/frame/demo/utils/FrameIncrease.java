@@ -14,7 +14,13 @@ public class FrameIncrease {
 
     private AtomicLong frameNo = new AtomicLong(0);
 
-//    private FrameIncrease(){}
+    public FrameIncrease(long val) {
+        this.frameNo = new AtomicLong(val);
+    }
+
+    public FrameIncrease() {}
+
+    //    private FrameIncrease(){}
 //
 //    public static FrameIncrease getInstance(){
 //        synchronized (FrameIncrease.class){

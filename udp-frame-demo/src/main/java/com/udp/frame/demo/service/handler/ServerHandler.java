@@ -42,17 +42,17 @@ public class ServerHandler extends SimpleChannelInboundHandler<MsgPackage> {
 
     @Override
     protected void channelRead0(final ChannelHandlerContext ch, final MsgPackage msgPackage) throws InterruptedException {
-        System.out.println(Thread.currentThread().getName() + "ServerHandler-接收到数据" + msgPackage);
+//        System.out.println(Thread.currentThread().getName() + "ServerHandler-接收到数据" + msgPackage);
 
-        if(frameIncrease.getFrameNo() == msgPackage.getFrame() && senderlist.isEmpty()){
-            //计时器
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    isTimeout =true;
-                }
-            },10);
-        }
+//        if(frameIncrease.getFrameNo() == msgPackage.getFrame() && senderlist.isEmpty()){
+//            //计时器
+//            timer.schedule(new TimerTask() {
+//                @Override
+//                public void run() {
+//                    isTimeout =true;
+//                }
+//            },10);
+//        }
 
 
         threadPool.execute(new Runnable() {
@@ -78,23 +78,28 @@ public class ServerHandler extends SimpleChannelInboundHandler<MsgPackage> {
 
 
                 if (isContain || isTimeout) {
+                    System.out.println("广播执行"+senderlist);
                     //所有数据接收到广播给所有人
                     Iterator<Map.Entry<String, InetSocketAddress>> iterator = chmap.entrySet().iterator();
                     while (iterator.hasNext()) {
                         Map.Entry<String, InetSocketAddress> next = iterator.next();
                         String key = next.getKey();
 //                            InetSocketAddress add = next.getValue();
-                        MsgPackage msgPackage1 = PackageCacheMap.getInstance().getPMap().get(key);
-                        for (Object receiver : msgPackage1.getReceivers()) {
-                            msgPackage.setAddress(chmap.get(receiver));
-                            ch.writeAndFlush(msgPackage1);
+                        MsgPackage msgPackageTmp = PackageCacheMap.getInstance().getPMap().get(key);
+                        if(msgPackageTmp != null){
+                            for (Object receiver : msgPackageTmp.getReceivers()) {
+                                msgPackage.setAddress(chmap.get(receiver));
+                                ch.writeAndFlush(msgPackageTmp);
+                            }
                         }
+
                     }
                     frameIncrease.addFrameNo();
                     senderlist.clear();
                 } else {
                     //缓存一帧数据
                     PackageCacheMap.getInstance().getPMap().put(sender, msgPackage);
+                    msgPackage.setType(1);
                     //发接收确认包,等待所有数据接收到
                     msgPackage.setAddress(chmap.get(sender));
                     ch.writeAndFlush(msgPackage);

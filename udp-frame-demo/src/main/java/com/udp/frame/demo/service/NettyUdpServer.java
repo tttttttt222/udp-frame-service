@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
  */
 public class NettyUdpServer {
 
-    private FrameIncrease frameIncrease = new FrameIncrease();
+    private FrameIncrease frameIncrease = new FrameIncrease(1L);
 
     private ExecutorService fixedThreadPool = Executors.newFixedThreadPool (Runtime.getRuntime().availableProcessors());
 

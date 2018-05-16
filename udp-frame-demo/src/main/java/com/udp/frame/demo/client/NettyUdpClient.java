@@ -64,7 +64,7 @@ public class NettyUdpClient<T> {
                         protected void initChannel(NioDatagramChannel nioDatagramChannel) throws Exception {
                             nioDatagramChannel.pipeline().addLast(new InfoEncodeHandler());
                             nioDatagramChannel.pipeline().addLast(new InfoDecodeHandler());
-                            nioDatagramChannel.pipeline().addLast(new ClientWriteHandler(timer, 10, sender, receivers, serverAddress, data, frameIncrease));
+                            nioDatagramChannel.pipeline().addLast(new ClientWriteHandler(timer, 3000, sender, receivers, serverAddress, data, frameIncrease));
                             nioDatagramChannel.pipeline().addLast(new ClientReadHandler(receiveInfoInterface));
                         }
                     });
