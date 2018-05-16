@@ -4,6 +4,7 @@ import com.udp.frame.demo.common.InfoDecodeHandler;
 import com.udp.frame.demo.common.InfoEncodeHandler;
 import com.udp.frame.demo.service.handler.PerosnInHandler;
 import com.udp.frame.demo.service.handler.ServerHandler;
+import com.udp.frame.demo.utils.FrameIncrease;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -11,6 +12,9 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 项目名称:testProject
@@ -20,7 +24,9 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
  */
 public class NettyUdpServer {
 
+    private FrameIncrease frameIncrease = new FrameIncrease();
 
+    private ExecutorService fixedThreadPool = Executors.newFixedThreadPool (Runtime.getRuntime().availableProcessors());
 
     public void run(int port) throws Exception {
         EventLoopGroup workerGroup  = new NioEventLoopGroup();
@@ -37,7 +43,7 @@ public class NettyUdpServer {
                         nioDatagramChannel.pipeline().addLast(new InfoEncodeHandler());
                         nioDatagramChannel.pipeline().addLast(new InfoDecodeHandler());
                         nioDatagramChannel.pipeline().addLast(new PerosnInHandler());
-                        nioDatagramChannel.pipeline().addLast(new ServerHandler());
+                        nioDatagramChannel.pipeline().addLast(new ServerHandler(frameIncrease,fixedThreadPool));
                     }
                 });
             ChannelFuture future = b.bind(port).sync();

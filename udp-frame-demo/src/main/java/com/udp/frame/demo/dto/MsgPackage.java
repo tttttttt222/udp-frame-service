@@ -12,7 +12,8 @@ import java.util.List;
 public class MsgPackage<T> {
 
 
-    /*0 普通上传 1连接包 2 重连*/
+    /*客户端发送 0 普通上传 1连接包 2 重连*/
+    /*服务端发送 0普通 1应答包*/
     int type;
 
     /*请求序列*/
