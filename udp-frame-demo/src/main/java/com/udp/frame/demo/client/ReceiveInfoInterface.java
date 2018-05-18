@@ -8,5 +8,5 @@ package com.udp.frame.demo.client;
  */
 public interface ReceiveInfoInterface<T> {
 
-    void readInfo(T msg);
+    void readInfo(T msg,int type);
 }

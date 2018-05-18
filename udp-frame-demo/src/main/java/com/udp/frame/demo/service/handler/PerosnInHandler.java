@@ -8,7 +8,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import java.net.InetSocketAddress;
 import java.util.Map;
 
-import static javax.swing.UIManager.put;
 
 /**
  * 项目名称:udp-frame-demo

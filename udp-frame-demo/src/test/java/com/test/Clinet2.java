@@ -22,9 +22,10 @@ public class Clinet2 {
         receivers.add("b");
         SimpleFrameInfoRequest simpleFrameInfoRequest = new SimpleFrameInfoRequest();
         FrameIncrease frameIncrease = new FrameIncrease();
-        simpleFrameInfoRequest.setMsg("a数据");
+        simpleFrameInfoRequest.setMsg("a连接");
         new NettyUdpClient<SimpleFrameInfoRequest>("a", receivers, new InetSocketAddress("127.0.0.1", 9999), simpleFrameInfoRequest, frameIncrease, new ReceiveInfoInterface() {
-            public void readInfo(Object msg) {
+            public void readInfo(Object msg,int type) {
+                simpleFrameInfoRequest.setMsg("a数据"+frameIncrease.getFrameNo());
                 System.out.println(msg);
             }
         }).run();

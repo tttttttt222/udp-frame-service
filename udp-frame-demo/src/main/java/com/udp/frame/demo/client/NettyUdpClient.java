@@ -1,11 +1,11 @@
 package com.udp.frame.demo.client;
 
-import com.udp.frame.demo.client.handler.ClientReadHandler;
-import com.udp.frame.demo.client.handler.ClientWriteHandler;
+import com.udp.frame.demo.client.handler.ClientCoreHandler;
+import com.udp.frame.demo.abandon.ClientActiveHandler;
 import com.udp.frame.demo.common.InfoDecodeHandler;
 import com.udp.frame.demo.common.InfoEncodeHandler;
-import com.udp.frame.demo.dto.request.SimpleFrameInfoRequest;
 import com.udp.frame.demo.utils.FrameIncrease;
+import com.udp.frame.demo.utils.MsgPackageUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -16,7 +16,6 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 
 
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 
@@ -64,8 +63,8 @@ public class NettyUdpClient<T> {
                         protected void initChannel(NioDatagramChannel nioDatagramChannel) throws Exception {
                             nioDatagramChannel.pipeline().addLast(new InfoEncodeHandler());
                             nioDatagramChannel.pipeline().addLast(new InfoDecodeHandler());
-                            nioDatagramChannel.pipeline().addLast(new ClientWriteHandler(timer, 3000, sender, receivers, serverAddress, data, frameIncrease));
-                            nioDatagramChannel.pipeline().addLast(new ClientReadHandler(receiveInfoInterface));
+//                            nioDatagramChannel.pipeline().addLast(new ClientActiveHandler(timer, 3000, frameIncrease,MsgPackageUtils.createMsgPackage(sender, receivers, serverAddress, 1,data)));
+                            nioDatagramChannel.pipeline().addLast(new ClientCoreHandler(timer,3000,frameIncrease,MsgPackageUtils.createMsgPackage(sender, receivers, serverAddress, data),receiveInfoInterface));
                         }
                     });
             ChannelFuture future = b.bind(0).sync();

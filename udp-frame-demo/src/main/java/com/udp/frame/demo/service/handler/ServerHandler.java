@@ -5,6 +5,7 @@ import com.udp.frame.demo.common.ChannelMap;
 import com.udp.frame.demo.common.PackageCacheMap;
 import com.udp.frame.demo.dto.MsgPackage;
 import com.udp.frame.demo.utils.FrameIncrease;
+import com.udp.frame.demo.utils.MsgPackageUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -31,7 +32,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<MsgPackage> {
 
     private ReentrantLock reentrantLock = new ReentrantLock();
 
-    private boolean isTimeout = false;
+//    private boolean isTimeout = false;
 
     private Timer timer = new Timer(true);
 
@@ -41,44 +42,21 @@ public class ServerHandler extends SimpleChannelInboundHandler<MsgPackage> {
     }
 
     @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
+    }
+
+    @Override
     protected void channelRead0(final ChannelHandlerContext ch, final MsgPackage msgPackage) throws InterruptedException {
 //        System.out.println(Thread.currentThread().getName() + "ServerHandler-接收到数据" + msgPackage);
 
-//        if(frameIncrease.getFrameNo() == msgPackage.getFrame() && senderlist.isEmpty()){
-//            //计时器
-//            timer.schedule(new TimerTask() {
-//                @Override
-//                public void run() {
-//                    isTimeout =true;
-//                }
-//            },10);
-//        }
-
-
-        threadPool.execute(new Runnable() {
-            public void run() {
-                Map<String, InetSocketAddress> chmap = ChannelMap.getInstance().getChmap();
-                boolean isContain = false;
-                String sender = msgPackage.getSender();
-                //判断帧
-                if (frameIncrease.getFrameNo() == msgPackage.getFrame() && !senderlist.contains(sender)) {
-                    reentrantLock.lock();
-                    senderlist.add(sender);
-                    reentrantLock.unlock();
-                    Set<String> keys = chmap.keySet();
-                    for (String key : keys) {
-                        if (senderlist.contains(key)) {
-                            isContain = true;
-                        } else {
-                            isContain = false;
-                            break;
-                        }
-                    }
-                }
-
-
-                if (isContain || isTimeout) {
-                    System.out.println("广播执行"+senderlist);
+        if (frameIncrease.getFrameNo() == msgPackage.getFrame() && senderlist.isEmpty() && msgPackage.getType() == 0) {
+            //计时器
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.out.println("广播执行-接收到包的发送者数量--" + senderlist.size() + "--" + senderlist + "帧序号" + frameIncrease.getFrameNo());
+                    Map<String, InetSocketAddress> chmap = ChannelMap.getInstance().getChmap();
                     //所有数据接收到广播给所有人
                     Iterator<Map.Entry<String, InetSocketAddress>> iterator = chmap.entrySet().iterator();
                     while (iterator.hasNext()) {
@@ -86,19 +64,32 @@ public class ServerHandler extends SimpleChannelInboundHandler<MsgPackage> {
                         String key = next.getKey();
 //                            InetSocketAddress add = next.getValue();
                         MsgPackage msgPackageTmp = PackageCacheMap.getInstance().getPMap().get(key);
-                        if(msgPackageTmp != null){
+                        if (msgPackageTmp != null) {
                             for (Object receiver : msgPackageTmp.getReceivers()) {
-                                msgPackage.setAddress(chmap.get(receiver));
+                                msgPackageTmp.setAddress(chmap.get(receiver));
                                 ch.writeAndFlush(msgPackageTmp);
                             }
                         }
-
                     }
                     frameIncrease.addFrameNo();
                     senderlist.clear();
-                } else {
+                }
+            }, 10000);
+        }
+
+
+        threadPool.execute(new Runnable() {
+            public void run() {
+                Map<String, InetSocketAddress> chmap = ChannelMap.getInstance().getChmap();
+                String sender = msgPackage.getSender();
+                //判断帧
+                if (frameIncrease.getFrameNo() == msgPackage.getFrame() && !senderlist.contains(sender)) {
+                    reentrantLock.lock();
+                    senderlist.add(sender);
+                    reentrantLock.unlock();
+                    MsgPackage copyMsgPackage = MsgPackageUtils.copyMsgPackage(msgPackage);
                     //缓存一帧数据
-                    PackageCacheMap.getInstance().getPMap().put(sender, msgPackage);
+                    PackageCacheMap.getInstance().getPMap().put(sender, copyMsgPackage);
                     msgPackage.setType(1);
                     //发接收确认包,等待所有数据接收到
                     msgPackage.setAddress(chmap.get(sender));
@@ -107,6 +98,17 @@ public class ServerHandler extends SimpleChannelInboundHandler<MsgPackage> {
             }
         });
 
+
+//         boolean isContain = false;
+//                    Set<String> keys = chmap.keySet();
+//                    for (String key : keys) {
+//                        if (senderlist.contains(key)) {
+//                            isContain = true;
+//                        } else {
+//                            isContain = false;
+//                            break;
+//                        }
+//                    }
 
 //        List<String> receivers = msgPackage.getReceivers();
 //        for (String receiver : receivers) {

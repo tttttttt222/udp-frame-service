@@ -12,7 +12,7 @@ import java.util.List;
 public class MsgPackage<T> {
 
 
-    /*客户端发送 0 普通上传 1连接包 2 重连*/
+    /*客户端发送 0 普通上传 1连接包 2 重连 3请求指定帧*/
     /*服务端发送 0普通 1应答包*/
     int type;
 
@@ -87,6 +87,7 @@ public class MsgPackage<T> {
     public void setAddress(InetSocketAddress address) {
         this.address = address;
     }
+
 
     @Override
     public String toString() {
