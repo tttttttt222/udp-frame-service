@@ -9,6 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
+import org.apache.log4j.Logger;
 
 import java.net.InetSocketAddress;
 import java.util.Timer;
@@ -21,6 +22,8 @@ import java.util.Timer;
  * 创建时间:2018/5/8
  */
 public class ClientCoreHandler<T> extends SimpleChannelInboundHandler<MsgPackage> {
+
+    private static Logger logger = Logger.getLogger(ClientCoreHandler.class);
 
     private ReceiveInfoInterface receiveInfoInterface;
 
@@ -46,7 +49,7 @@ public class ClientCoreHandler<T> extends SimpleChannelInboundHandler<MsgPackage
         msgPackage.setFrame(frameIncrease.getFrameNo());
         msgPackage.setType(1);
         frameIncrease.addFrameNo();
-        System.out.println("ClientCoreHandler-连接-发送数据:" + msgPackage);
+        logger.info("ClientCoreHandler-连接-发送数据:" + msgPackage);
         ctx.writeAndFlush(msgPackage);
     }
 
@@ -55,13 +58,13 @@ public class ClientCoreHandler<T> extends SimpleChannelInboundHandler<MsgPackage
 
         switch (msgReceivePackage.getType()) {
             case 0:
-                System.out.println("接收到-普通-数据:" + msgReceivePackage);
+                logger.info("接收到-普通-数据:" + msgReceivePackage);
                 receiveInfoInterface.readInfo(msgReceivePackage.getInfo(),0);
                 //发送下一帧数据
                 sendNormalFramePackage(ctx, msgPackage);
                 break;
             case 1:
-                System.out.println("接收到-应答-数据:" + msgReceivePackage);
+                logger.info("接收到-应答-数据:" + msgReceivePackage);
                 if(msgReceivePackage.getFrame() == 0L){ //连接确认包
                     receiveInfoInterface.readInfo(msgReceivePackage.getInfo(),1);
                     //发送第一帧数据
@@ -80,7 +83,7 @@ public class ClientCoreHandler<T> extends SimpleChannelInboundHandler<MsgPackage
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        System.out.println("异常断开" + cause);
+        logger.info("异常断开" + cause);
         ctx.close();
     }
 
@@ -89,7 +92,7 @@ public class ClientCoreHandler<T> extends SimpleChannelInboundHandler<MsgPackage
         msgPackage.setSeq(System.currentTimeMillis());
         msgPackage.setFrame(frameIncrease.getFrameNo());
         frameIncrease.addFrameNo();
-        System.out.println("ClientCoreHandler-普通-发送数据:" + msgPackage);
+        logger.info("ClientCoreHandler-普通-发送数据:" + msgPackage);
         ctx.writeAndFlush(msgPackage);
     }
 

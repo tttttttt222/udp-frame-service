@@ -4,6 +4,7 @@ import com.udp.frame.demo.client.NettyUdpClient;
 import com.udp.frame.demo.client.ReceiveInfoInterface;
 import com.udp.frame.demo.dto.request.SimpleFrameInfoRequest;
 import com.udp.frame.demo.utils.FrameIncrease;
+import org.apache.log4j.Logger;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
  */
 public class Client1 {
 
+    private static Logger logger = Logger.getLogger(Client1.class);
+
     public static void main(String[] args) throws Exception {
         ArrayList<String> receivers = new ArrayList<String>();
         receivers.add("a");
@@ -25,7 +28,7 @@ public class Client1 {
         new NettyUdpClient<SimpleFrameInfoRequest>("b", receivers, new InetSocketAddress("127.0.0.1", 9999), simpleFrameInfoRequest, frameIncrease, new ReceiveInfoInterface() {
             public void readInfo(Object msg,int type) {
                 simpleFrameInfoRequest.setMsg("b数据"+frameIncrease.getFrameNo());
-                System.out.println(msg);
+                logger.info(msg);
             }
         }).run();
     }

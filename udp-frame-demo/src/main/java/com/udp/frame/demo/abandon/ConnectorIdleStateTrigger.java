@@ -9,6 +9,7 @@ import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.CharsetUtil;
+import org.apache.log4j.Logger;
 
 import java.net.InetSocketAddress;
 
@@ -22,12 +23,14 @@ import java.net.InetSocketAddress;
 public class ConnectorIdleStateTrigger extends ChannelInboundHandlerAdapter {
 
 
+    private static Logger logger = Logger.getLogger(ConnectorIdleStateTrigger.class);
+
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
             IdleState state = ((IdleStateEvent) evt).state();
             if (state == IdleState.WRITER_IDLE) {
-//                System.out.println("写触发");
+//                logger.info("写触发");
                 ByteBuf buf = Unpooled.copiedBuffer("Heartbeat", CharsetUtil.UTF_8);
                 DatagramPacket packet = new DatagramPacket(buf, new InetSocketAddress("127.0.0.1", 9999));
                 ctx.writeAndFlush(packet);

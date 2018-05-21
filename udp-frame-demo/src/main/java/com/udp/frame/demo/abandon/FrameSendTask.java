@@ -3,6 +3,7 @@ package com.udp.frame.demo.abandon;
 import com.udp.frame.demo.dto.MsgPackage;
 import com.udp.frame.demo.utils.FrameIncrease;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.log4j.Logger;
 
 
 import java.net.InetSocketAddress;
@@ -17,6 +18,7 @@ import java.util.TimerTask;
  */
 public class FrameSendTask<T> extends TimerTask {
 
+    private static Logger logger = Logger.getLogger(FrameSendTask.class);
 
     private ChannelHandlerContext ctx;
 
@@ -57,7 +59,7 @@ public class FrameSendTask<T> extends TimerTask {
         msgPackage.setSeq(System.currentTimeMillis());
         msgPackage.setInfo(infoRequest);
 
-        System.out.println("FrameSendTask-发送数据:"+msgPackage);
+        logger.info("FrameSendTask-发送数据:"+msgPackage);
         ctx.writeAndFlush(msgPackage);
     }
 }

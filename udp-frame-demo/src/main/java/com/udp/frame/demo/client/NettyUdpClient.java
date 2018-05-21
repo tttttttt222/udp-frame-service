@@ -13,6 +13,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import org.apache.log4j.Logger;
 
 
 import java.net.InetSocketAddress;
@@ -27,6 +28,8 @@ import java.util.Timer;
  */
 public class NettyUdpClient<T> {
 
+    private static Logger logger = Logger.getLogger(NettyUdpClient.class);
+
     private Timer timer = new Timer(true);
 
     private String sender;
@@ -40,6 +43,7 @@ public class NettyUdpClient<T> {
     private ReceiveInfoInterface receiveInfoInterface;
 
     private FrameIncrease frameIncrease;
+
 
     public NettyUdpClient(String sender, List<String> receivers, InetSocketAddress serverAddress, T data, FrameIncrease frameIncrease, ReceiveInfoInterface receiveInfoInterface) {
         this.sender = sender;
@@ -82,7 +86,7 @@ public class NettyUdpClient<T> {
 //        simpleFrameInfoRequest.setMsg("第数据");
 //        new NettyUdpClient<SimpleFrameInfoRequest>("a", receivers, new InetSocketAddress("127.0.0.1", 9999), simpleFrameInfoRequest, new FrameIncrease(), new ReceiveInfoInterface() {
 //            public void readInfo(Object msg) {
-//                System.out.println(msg);
+//                logger.info(msg);
 //            }
 //        }).run();
 //    }

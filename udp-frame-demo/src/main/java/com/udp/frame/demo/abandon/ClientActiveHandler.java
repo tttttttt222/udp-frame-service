@@ -1,10 +1,12 @@
 package com.udp.frame.demo.abandon;
 
 import com.udp.frame.demo.dto.MsgPackage;
+import com.udp.frame.demo.service.handler.ServerHandler;
 import com.udp.frame.demo.utils.FrameIncrease;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
+import org.apache.log4j.Logger;
 
 
 import java.net.InetSocketAddress;
@@ -19,6 +21,8 @@ import java.util.concurrent.TimeUnit;
  * 创建时间:2018/5/9
  */
 public class ClientActiveHandler<T> extends SimpleChannelInboundHandler<DatagramPacket> {
+
+    private static Logger logger = Logger.getLogger(ClientActiveHandler.class);
 
     private final Timer timer;
 
@@ -58,7 +62,7 @@ public class ClientActiveHandler<T> extends SimpleChannelInboundHandler<Datagram
         msgPackage.setSeq(System.currentTimeMillis());
         msgPackage.setFrame(frameIncrease.getFrameNo());
         frameIncrease.addFrameNo();
-        System.out.println("ClientActiveHandler-连接-发送数据:" + msgPackage);
+        logger.info("ClientActiveHandler-连接-发送数据:" + msgPackage);
         ctx.writeAndFlush(msgPackage);
 
     }

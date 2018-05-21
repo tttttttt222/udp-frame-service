@@ -8,6 +8,7 @@ import com.udp.frame.demo.utils.FrameIncrease;
 import com.udp.frame.demo.utils.MsgPackageUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.apache.log4j.Logger;
 
 import java.net.InetSocketAddress;
 import java.util.*;
@@ -22,6 +23,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * 创建时间:2018/5/7
  */
 public class ServerHandler extends SimpleChannelInboundHandler<MsgPackage> {
+
+    private static Logger logger = Logger.getLogger(ServerHandler.class);
 
     private FrameIncrease frameIncrease;
 
@@ -48,14 +51,14 @@ public class ServerHandler extends SimpleChannelInboundHandler<MsgPackage> {
 
     @Override
     protected void channelRead0(final ChannelHandlerContext ch, final MsgPackage msgPackage) {
-//        System.out.println(Thread.currentThread().getName() + "ServerHandler-接收到数据" + msgPackage);
+//        logger.info(Thread.currentThread().getName() + "ServerHandler-接收到数据" + msgPackage);
 
         if (frameIncrease.getFrameNo() == msgPackage.getFrame() && senderlist.isEmpty() && msgPackage.getType() == 0) {
             //计时器
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    System.out.println("广播执行-接收到包的发送者数量--" + senderlist.size() + "--" + senderlist + "帧序号" + frameIncrease.getFrameNo());
+                    logger.info("广播执行-接收到包的发送者数量--" + senderlist.size() + "--" + senderlist + "帧序号" + frameIncrease.getFrameNo());
                     Map<String, InetSocketAddress> chmap = ChannelMap.getInstance().getChmap();
                     //所有数据接收到广播给所有人
                     Iterator<Map.Entry<String, InetSocketAddress>> iterator = chmap.entrySet().iterator();
@@ -126,7 +129,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<MsgPackage> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-//        System.out.println("异常断开"+cause);
+//        logger.info("异常断开"+cause);
 //        ctx.close();
     }
 }
