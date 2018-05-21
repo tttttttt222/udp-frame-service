@@ -55,11 +55,6 @@ public class ServerHandler extends SimpleChannelInboundHandler<MsgPackage> {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    try {
-                        Thread.sleep(10000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                     System.out.println("广播执行-接收到包的发送者数量--" + senderlist.size() + "--" + senderlist + "帧序号" + frameIncrease.getFrameNo());
                     Map<String, InetSocketAddress> chmap = ChannelMap.getInstance().getChmap();
                     //所有数据接收到广播给所有人
